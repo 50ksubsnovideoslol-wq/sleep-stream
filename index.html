@@ -14,7 +14,7 @@
 <div class="box">
   <h1>🎥 Sleep Stream Queue</h1>
 
-  <input id="url" placeholder="Paste YouTube link here">
+  <input id="url" placeholder="Paste YouTube link">
   <button onclick="submitVideo()">Submit</button>
 
   <h2>Live Queue</h2>
@@ -22,7 +22,7 @@
 </div>
 
 <script>
-const REPO = "YOURNAME/YOURREPO";
+const REPO = "50ksubsnovideoslol-wq/sleep-stream-video";
 
 function extractVideoId(url) {
   const reg = /(?:youtube\.com\/.*v=|youtu\.be\/)([^&]+)/;
@@ -30,20 +30,20 @@ function extractVideoId(url) {
   return match ? match[1] : null;
 }
 
-// Submit via GitHub Issues (no backend needed)
+// Submit via GitHub Issues
 function submitVideo() {
   const url = document.getElementById("url").value;
   const id = extractVideoId(url);
 
   if (!id) return alert("Invalid YouTube link");
 
-  const issueUrl =
-    `https://github.com/${REPO}/issues/new?title=Video&body=${id}`;
-
-  window.open(issueUrl, "_blank");
+  window.open(
+    `https://github.com/${REPO}/issues/new?title=Video&body=${id}`,
+    "_blank"
+  );
 }
 
-// Load queue from GitHub issues
+// Load queue
 async function loadQueue() {
   const res = await fetch(`https://api.github.com/repos/${REPO}/issues`);
   const data = await res.json();
