@@ -1,21 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sleep Stream Queue</title>
+  <style>
+    body { font-family: Arial; background:#111; color:#fff; padding:20px; }
+    input, button { padding:10px; margin:5px 0; width:100%; }
+    .box { max-width:600px; margin:auto; }
+    li { margin:5px 0; }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h1>🎥 Sleep Stream Queue</h1>
+
+  <input id="url" placeholder="Paste YouTube link">
+  <button onclick="submitVideo()">Submit</button>
+
+  <h2>Live Queue</h2>
+  <ul id="queue"></ul>
+</div>
+
 <script>
 const REPO = "50ksubsnovideoslol-wq/sleep-stream-video";
 
 function extractVideoId(url) {
-  const match = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&]+)/);
+  const reg = /(?:youtube\.com\/.*v=|youtu\.be\/)([^&]+)/;
+  const match = url.match(reg);
   return match ? match[1] : null;
 }
 
+// Submit via GitHub Issues
 function submitVideo() {
   const url = document.getElementById("url").value;
   const id = extractVideoId(url);
 
-  if (!id) return alert("Invalid link");
+  if (!id) return alert("Invalid YouTube link");
 
-  // THIS is your "send"
   window.open(
     `https://github.com/${REPO}/issues/new?title=Video&body=${id}`,
     "_blank"
   );
 }
+
+// Load queue
+async function loadQueue() {
+  const res = await fetch(`https://api.github.com/repos/${REPO}/issues`);
+  const data = await res.json();
+
+  const list = document.getElementById("queue");
+  list.innerHTML = "";
+
+  data
+    .filter(i => !i.pull_request)
+    .forEach((issue, i) => {
+      const li = document.createElement("li");
+      li.textContent = `#${i+1} ${issue.body}`;
+      list.appendChild(li);
+    });
+}
+
+loadQueue();
+setInterval(loadQueue, 5000);
 </script>
+
+</body>
+</html>
